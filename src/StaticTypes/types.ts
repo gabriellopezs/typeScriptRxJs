@@ -18,7 +18,8 @@ let booleanArray: Array<boolean>;
 
 let stringArrayTwo: string[];
 let numberArrayTwo: number[];
-let booleanArrayTwo: boolean[];
+
+let booleanArrayTwo: boolean[]; 
 let arrayOfAny: any[];
 
 let voidVariable: void = undefined;

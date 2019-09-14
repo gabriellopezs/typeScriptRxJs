@@ -1,16 +1,19 @@
 import { printTypes } from './StaticTypes/types';
 
-import * as fnc from './Functions/functions';
+
 import Count from './Classes/Count';
+import { getInfo } from './Functions/functions';
 
 printTypes();
 
-console.log(fnc.getInfo('Gabriel', 'Lopez'));
-
 const MyCount = new Count();
+
 MyCount.count('Metrica', 4, 4, ['tag1', 'tag2']);
 MyCount.count('Metrica', 4, 4);
 MyCount.count('Metrica', 4,['tag1', 'tag2']);
 MyCount.count('Metrica', 4);
 
-
+console.log(getInfo('Gabriel', 'Lopez', 35));
+console.log(getInfo('Gabriel', 'Lopez', 35));
+console.log(getInfo('Gabriel', 'Lopez', 35));
+console.log(getInfo('Gabriel', 'Lopez', 35));
