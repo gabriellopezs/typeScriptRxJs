@@ -1,19 +1,34 @@
 import { printTypes } from './StaticTypes/types';
-
-
 import Count from './Classes/Count';
 import { getInfo } from './Functions/functions';
+import Observable, { logEvent }  from './rxjs/learn';
+import './css/_styles.scss';
 
-printTypes();
+import myObservable from './rxjs/observable'
 
-const MyCount = new Count();
+// printTypes();
 
-MyCount.count('Metrica', 4, 4, ['tag1', 'tag2']);
-MyCount.count('Metrica', 4, 4);
-MyCount.count('Metrica', 4,['tag1', 'tag2']);
-MyCount.count('Metrica', 4);
+// const MyCount = new Count();
 
-console.log(getInfo('Gabriel', 'Lopez', 35));
-console.log(getInfo('Gabriel', 'Lopez', 35));
-console.log(getInfo('Gabriel', 'Lopez', 35));
-console.log(getInfo('Gabriel', 'Lopez', 35));
+// MyCount.count('Metrica', 4, 4, ['tag1', 'tag2']);
+// MyCount.count('Metrica', 4, 4);
+// MyCount.count('Metrica', 4,['tag1', 'tag2']);
+// MyCount.count('Metrica', 4);
+
+// console.log(getInfo('Gabriel', 'Lopez', 35));
+// console.log(getInfo('Gabriel', 'Lopez', 35));
+// console.log(getInfo('Gabriel', 'Lopez', 35));
+// console.log(getInfo('Gabriel', 'Lopez', 35));
+
+// Observable.subscribe(
+//     value => console.log('Value from Observable =>> ', value)
+// )
+
+
+// logEvent(document.getElementById('mainBody')).subscribe(
+    //     event => { }
+    // )
+
+myObservable.subscribe( (value: any) => {
+    console.log('Value Emmitted => ', value);
+});
