@@ -1,7 +1,7 @@
 # typeScriptRxJs
 Crash Course. Typescript - RxJS
 
-* Clone this repo to you machine
+* Clone this repo to your machine
 * npm i
 * npm start
 * Head over http://localhost:8080
