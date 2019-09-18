@@ -17,6 +17,7 @@ import { fromEvent, from, interval, Subject, combineLatest, of } from 'rxjs';
 
 
 import Axios from 'axios-observable';
+import { type } from 'os';
 
 const bodyRef = document.getElementById('mainBody');
 const buttonIniciar = document.getElementsByClassName('btn-success')
@@ -76,13 +77,13 @@ const buttonDetener = document.getElementsByClassName('btn-danger')
 // fromEvent(bodyRef,'mousemove').subscribe( value => console.log(value));
 // fromEvent(bodyRef,'mousedown').subscribe( value => console.log(value));
 
-const streamCombinado$ = combineLatest(
-    from(Axios.get('https://httpstat.us/200?sleep=5000')),
-    from(Axios.get('https://httpstat.us/200?sleep=1000'))
-).pipe(
-    timeout(6000),
-    retry(2)
-)
+// const streamCombinado$ = combineLatest(
+//     from(Axios.get('https://httpstat.us/200?sleep=5000')),
+//     from(Axios.get('https://httpstat.us/200?sleep=1000'))
+// ).pipe(
+//     timeout(6000),
+//     retry(2)
+// )
 
 // fromEvent(buttonIniciar, 'click').pipe(
 //     exhaustMap( ev => streamCombinado$)
@@ -92,16 +93,16 @@ const streamCombinado$ = combineLatest(
 // });
 
 //Cancelar invocación
-fromEvent(buttonIniciar, 'click').pipe(
-    switchMap(ev => streamCombinado$),
-    takeUntil(fromEvent(buttonDetener, 'click')),
-    repeat()
-).subscribe({
-    next: ([resultOne, resultTwo]) => {
-        console.log('Result ONE ===> ', resultOne)
-        console.log('Result TWO ===> ', resultTwo)
-    }, error: error => console.log(error)
-});
+// fromEvent(buttonIniciar, 'click').pipe(
+//     switchMap(ev => streamCombinado$),
+//     takeUntil(fromEvent(buttonDetener, 'click')),
+//     repeat()
+// ).subscribe({
+//     next: ([resultOne, resultTwo]) => {
+//         console.log('Result ONE ===> ', resultOne)
+//         console.log('Result TWO ===> ', resultTwo)
+//     }, error: error => console.log(error)
+// });
 
 
 // const Obsy = from([1,2,3,45,6]).pipe(
@@ -112,3 +113,28 @@ fromEvent(buttonIniciar, 'click').pipe(
 //     })    
 // )
 // .subscribe( value => console.log('Valor: ', value))
+
+type FrutaActions = "CORTAR FRUTA" | "COMER FURTA"
+type GuisadoActions = "COCINAR GUISADO" | "COMER GUISADO"
+
+
+interface ObjetoBase{
+    nombre?: string;
+}
+
+interface Fruta extends ObjetoBase{
+    numeroFrutas?: number;
+}
+
+interface Guisado extends ObjetoBase{
+    tiempoCoccion?: number
+}
+
+class Action<T, P> {
+    readonly type: T
+    constructor(type: T , public payload: P){
+        this.type = type;
+    }
+}
+
+const myAction = new Action<FrutaActions, Guisado>('COMER FURTA',{});
