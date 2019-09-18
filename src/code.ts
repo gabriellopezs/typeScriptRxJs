@@ -114,9 +114,20 @@ const buttonDetener = document.getElementsByClassName('btn-danger')
 // )
 // .subscribe( value => console.log('Valor: ', value))
 
-type FrutaActions = "CORTAR FRUTA" | "COMER FURTA"
-type GuisadoActions = "COCINAR GUISADO" | "COMER GUISADO"
 
+type FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA'
+type FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
+
+type GUISADO_COCINAR_GUISADO = '[GUISADO] COCINAR'
+type GUISADO_COMER_GUISADO = '[GUISADO] COMER'
+
+type FrutaActions = FRUTA_CORTAR_FRUTA | FRUTA_COMER_FRUTA
+type GuisadoActions =  GUISADO_COCINAR_GUISADO | GUISADO_COMER_GUISADO
+
+const enum FRUTA_ACTIONS {
+    FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA',
+    FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
+}
 
 interface ObjetoBase{
     nombre?: string;
@@ -137,4 +148,4 @@ class Action<T, P> {
     }
 }
 
-const myAction = new Action<FrutaActions, Guisado>('COMER FURTA',{});
+const myAction = new Action<FRUTA_ACTIONS, Guisado>(FRUTA_ACTIONS.FRUTA_COMER_FRUTA,{});
