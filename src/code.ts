@@ -12,16 +12,23 @@ import Observable, {
 import './css/_styles.scss';
 
 import { myObservable, hotObservable, intervalObs } from './rxjs/observable'
-import { take, debounceTime, takeUntil, repeat, exhaustMap, exhaust, takeWhile, switchMap, mergeMap, skipUntil, map, mergeAll, throttle, tap, switchMapTo, timeout, retry, min, max, combineAll, mapTo, concatMapTo, concatAll } from 'rxjs/operators';
+import { take, debounceTime, takeUntil, repeat, exhaustMap, exhaust, takeWhile, switchMap, mergeMap, skipUntil, map, mergeAll, throttle, tap, switchMapTo, timeout, retry, min, max, combineAll, mapTo, concatMapTo, concatAll, filter, distinctUntilChanged } from 'rxjs/operators';
 import { fromEvent, from, interval, Subject, combineLatest, of } from 'rxjs';
 
 
 import Axios from 'axios-observable';
 import { type } from 'os';
+import { AxiosResponse } from 'axios';
+
+const log = (value: any) => console.log('======> ', value);
 
 const bodyRef = document.getElementById('mainBody');
+const inputRef = document.getElementById('textoCualquiera');
+
 const buttonIniciar = document.getElementsByClassName('btn-success')
 const buttonDetener = document.getElementsByClassName('btn-danger')
+const todosURL = 'https://jsonplaceholder.typicode.com/todos/'
+
 
 // printTypes();
 
@@ -115,37 +122,71 @@ const buttonDetener = document.getElementsByClassName('btn-danger')
 // .subscribe( value => console.log('Valor: ', value))
 
 
-type FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA'
-type FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
+// type FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA'
+// type FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
 
-type GUISADO_COCINAR_GUISADO = '[GUISADO] COCINAR'
-type GUISADO_COMER_GUISADO = '[GUISADO] COMER'
+// type GUISADO_COCINAR_GUISADO = '[GUISADO] COCINAR'
+// type GUISADO_COMER_GUISADO = '[GUISADO] COMER'
 
-type FrutaActions = FRUTA_CORTAR_FRUTA | FRUTA_COMER_FRUTA
-type GuisadoActions =  GUISADO_COCINAR_GUISADO | GUISADO_COMER_GUISADO
+// type FrutaActions = FRUTA_CORTAR_FRUTA | FRUTA_COMER_FRUTA
+// type GuisadoActions =  GUISADO_COCINAR_GUISADO | GUISADO_COMER_GUISADO
 
-const enum FRUTA_ACTIONS {
-    FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA',
-    FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
+// const enum FRUTA_ACTIONS {
+//     FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA',
+//     FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
+// }
+
+// interface ObjetoBase{
+//     nombre?: string;
+// }
+
+// interface Fruta extends ObjetoBase{
+//     numeroFrutas?: number;
+// }
+
+// interface Guisado extends ObjetoBase{
+//     tiempoCoccion?: number;
+// }
+
+// class Action<T, P> {
+//     readonly type: T;
+//     constructor(type: T , public payload: P){
+//         this.type = type;
+//     }
+// }
+
+// const myAction = new Action<FRUTA_ACTIONS, Guisado>(FRUTA_ACTIONS.FRUTA_COMER_FRUTA,{});
+
+
+
+interface todosData {
+    userId: number;
+    id: number;
+    title: string;
+    completed: boolean;
 }
 
-interface ObjetoBase{
-    nombre?: string;
-}
 
-interface Fruta extends ObjetoBase{
-    numeroFrutas?: number;
-}
+const inputObs = fromEvent<Event>(inputRef, 'input').pipe(
+    map(ev => (ev.target as HTMLInputElement).value),
+    debounceTime(500),
+    distinctUntilChanged(),
+    tap(value => userIdObs.next(Number(value)))
+)
 
-interface Guisado extends ObjetoBase{
-    tiempoCoccion?: number
-}
+const requestObs = combineLatest(
+    inputObs,
+    fromEvent(buttonIniciar, 'click')
+).pipe(
+    switchMap(mouseEvent => from(Axios.get<todosData[]>(todosURL))),
+    map(response => response.data)
+)
 
-class Action<T, P> {
-    readonly type: T
-    constructor(type: T , public payload: P){
-        this.type = type;
-    }
-}
+const userIdObs = new Subject<number>();
+const userIdObs$ = userIdObs.asObservable();
 
-const myAction = new Action<FRUTA_ACTIONS, Guisado>(FRUTA_ACTIONS.FRUTA_COMER_FRUTA,{});
+const resultFilter = combineLatest(requestObs, userIdObs$).pipe(
+    map(([data, userId]) => data.filter(todo => todo.userId === userId))
+)
+
+resultFilter.subscribe(log)
