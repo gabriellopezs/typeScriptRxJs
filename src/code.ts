@@ -50,7 +50,8 @@ const buttonDetener = document.getElementsByClassName('btn-danger')
 // });
 
 // logEvent(document.getElementById('mainBody')).subscribe(
-//     event => { }
+//     event => { 
+//     }
 // )
 
 // exhaustExample.subscribe( value => console.log('Exhaust Example => ', value));
@@ -114,38 +115,3 @@ const buttonDetener = document.getElementsByClassName('btn-danger')
 // )
 // .subscribe( value => console.log('Valor: ', value))
 
-
-type FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA'
-type FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
-
-type GUISADO_COCINAR_GUISADO = '[GUISADO] COCINAR'
-type GUISADO_COMER_GUISADO = '[GUISADO] COMER'
-
-type FrutaActions = FRUTA_CORTAR_FRUTA | FRUTA_COMER_FRUTA
-type GuisadoActions =  GUISADO_COCINAR_GUISADO | GUISADO_COMER_GUISADO
-
-const enum FRUTA_ACTIONS {
-    FRUTA_CORTAR_FRUTA = '[FRUTA] CORTAR FRUTA',
-    FRUTA_COMER_FRUTA = '[FRUTA] COMER FRUTA'
-}
-
-interface ObjetoBase{
-    nombre?: string;
-}
-
-interface Fruta extends ObjetoBase{
-    numeroFrutas?: number;
-}
-
-interface Guisado extends ObjetoBase{
-    tiempoCoccion?: number
-}
-
-class Action<T, P> {
-    readonly type: T
-    constructor(type: T , public payload: P){
-        this.type = type;
-    }
-}
-
-const myAction = new Action<FRUTA_ACTIONS, Guisado>(FRUTA_ACTIONS.FRUTA_COMER_FRUTA,{});

@@ -3,6 +3,9 @@ import { share, shareReplay, map } from 'rxjs/operators'
 
 export const myObservable = Observable.create( (observer: Observer<any>) => {
     observer.next(Math.random())
+    observer.next(Math.random())
+    observer.complete();
+    observer
 })
 
 export const intervalObs = interval(1000).pipe(
