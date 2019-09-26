@@ -12,8 +12,8 @@ import Observable, {
 import './css/_styles.scss';
 
 import { myObservable, hotObservable, intervalObs } from './rxjs/observable'
-import { take, debounceTime, takeUntil, repeat, exhaustMap, exhaust, takeWhile, switchMap, mergeMap, skipUntil, map, mergeAll, throttle, tap, switchMapTo, timeout, retry, min, max, combineAll, mapTo, concatMapTo, concatAll, filter, distinctUntilChanged } from 'rxjs/operators';
-import { fromEvent, from, interval, Subject, combineLatest, of } from 'rxjs';
+import { take, debounceTime, takeUntil, repeat, exhaustMap, exhaust, takeWhile, switchMap, mergeMap, skipUntil, map, mergeAll, throttle, tap, switchMapTo, timeout, retry, min, max, combineAll, mapTo, concatMapTo, concatAll, filter, distinctUntilChanged, concatMap, withLatestFrom } from 'rxjs/operators';
+import { fromEvent, from, interval, Subject, combineLatest, of, BehaviorSubject } from 'rxjs';
 
 
 import Axios from 'axios-observable';
@@ -158,8 +158,6 @@ const todosURL = 'https://jsonplaceholder.typicode.com/todos/'
 
 // const myAction = new Action<FRUTA_ACTIONS, Guisado>(FRUTA_ACTIONS.FRUTA_COMER_FRUTA,{});
 
-
-
 interface todosData {
     userId: number;
     id: number;
@@ -167,27 +165,35 @@ interface todosData {
     completed: boolean;
 }
 
-
 const inputObs = fromEvent<Event>(inputRef, 'input').pipe(
     map(ev => (ev.target as HTMLInputElement).value),
     debounceTime(500),
-    distinctUntilChanged(),
+    distinctUntilChanged()
+)
+
+const inputWithSideEffects = inputObs.pipe(
     tap(value => userIdObs.next(Number(value)))
 )
 
 const requestObs = combineLatest(
-    inputObs,
+    inputWithSideEffects,
     fromEvent(buttonIniciar, 'click')
 ).pipe(
-    switchMap(mouseEvent => from(Axios.get<todosData[]>(todosURL))),
+    switchMap(mouseEvent => {
+        console.log('request ====>')
+        return from(Axios.get<todosData[]>(todosURL))
+    }),
     map(response => response.data)
 )
 
-const userIdObs = new Subject<number>();
-const userIdObs$ = userIdObs.asObservable();
+const userIdObs = new BehaviorSubject<number>(0);
 
-const resultFilter = combineLatest(requestObs, userIdObs$).pipe(
-    map(([data, userId]) => data.filter(todo => todo.userId === userId))
+const resultFilterOnRequest = requestObs.pipe(
+    mergeMap(response => of(userIdObs.value)
+        .pipe(
+            map(userId => response.filter(todo => todo.userId === userId))
+        )
+    )
 )
 
-resultFilter.subscribe(log)
+resultFilterOnRequest.subscribe(log)
